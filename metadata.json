@@ -1,0 +1,7 @@
+{
+  "name": "OvaScan AI - Premium Ovarian Diagnostic Suite",
+  "description": "An industry-grade medical diagnostic platform for ovarian cancer and tumor detection utilizing a simulated ResNet50+ResNet18 hybrid deep learning architecture. Features include high-fidelity image analysis, automated clinical report generation, and real-world therapeutic solutions.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
