@@ -1,7 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Upload, X, ShieldAlert, FileText, CheckCircle, Loader2, BrainCircuit, Microscope, Zap, Database, Search } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 import { DiagnosisClass, AnalysisResult, PatientInfo } from '../types';
 import ReportTemplate from './ReportTemplate';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
@@ -57,39 +56,20 @@ const DiagnosticTool: React.FC = () => {
     setAnalyzing(true);
     
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `
-        Act as an advanced medical AI specializing in ovarian diagnostic imaging. 
-        You have analyzed this image using a ResNet50 (for deep feature extraction) and ResNet18 (for shallow edge/texture detection) hybrid model.
-        
-        Determine the classification based strictly on these 4 classes:
-        1. Not Infected (Healthy)
-        2. Infected (Inflammatory)
-        3. Ovarian Tumor (Benign)
-        4. Ovarian Cancer (Malignant)
+      const blob = await (await fetch(image)).blob();
+      const formData = new FormData();
+      formData.append('file', blob, 'image.jpg');
 
-        Provide a structured JSON response (even if strictly text, follow this structure):
-        - Diagnosis: [Class name]
-        - Confidence Score: [Percentage between 0-1]
-        - Clinical Findings: [Detailed medical observation]
-        - Recommendations: [Array of 3-4 medical next steps]
-      `;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: {
-          parts: [
-            { text: prompt },
-            { inlineData: { mimeType: 'image/jpeg', data: image.split(',')[1] } }
-          ]
-        },
-        config: {
-          temperature: 0.1,
-          responseMimeType: 'application/json'
-        }
+      const response = await fetch('http://localhost:8002/predict', {
+        method: 'POST',
+        body: formData,
       });
 
-      const parsedData = JSON.parse(response.text.trim());
+      if (!response.ok) {
+        throw new Error(`Backend API error: ${response.statusText}`);
+      }
+
+      const parsedData = await response.json();
       
       setResult({
         diagnosis: parsedData.Diagnosis as DiagnosisClass,

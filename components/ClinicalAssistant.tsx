@@ -1,18 +1,187 @@
 
-import React, { useState, useRef } from 'react';
-import { GoogleGenAI, Modality } from '@google/genai';
+import React, { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff, MessageSquare, Play, Info, Activity } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Add type definition for Vite's import.meta.env
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_GEMINI_API_KEY?: string;
+    };
+  }
+}
 
 const ClinicalAssistant: React.FC = () => {
   const [isActive, setIsActive] = useState(false);
   const [transcript, setTranscript] = useState<string[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
 
-  // Simplified simulation for display purposes, but hooks into industry standards
+  // Initialize Google Gemini AI
+  const getGeminiAPI = () => {
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+      console.log('API Key from env:', apiKey ? `Key exists (${apiKey.substring(0, 5)}...)` : 'Key is empty or undefined');
+      
+      if (!apiKey) {
+        console.warn('Gemini API key not found. Voice assistant will work but AI responses may be limited.');
+        return null;
+      }
+      
+      // Initialize with explicit API version
+      const genAI = new GoogleGenerativeAI(apiKey);
+      console.log('GoogleGenerativeAI initialized successfully');
+      return genAI;
+    } catch (error) {
+      console.error('Error initializing GoogleGenerativeAI:', error);
+      return null;
+    }
+  };
+
+  // Initialize Speech Recognition - setup once on mount
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = async (event: SpeechRecognitionEvent) => {
+        const last = event.results.length - 1;
+        const text = event.results[last][0].transcript;
+        
+        setTranscript(prev => [...prev, `You: ${text}`]);
+        setIsProcessing(true);
+
+        try {
+          // Get AI response from Gemini
+          const gemini = getGeminiAPI();
+          let aiResponse = "I'm sorry, I couldn't process that request. Please check your API key configuration.";
+
+          if (gemini) {
+            try {
+              console.log('Initializing model...');
+              const model = gemini.getGenerativeModel({ 
+                model: 'gemini-1.5-flash',
+                generationConfig: {
+                  temperature: 0.9,
+                  topK: 1,
+                  topP: 1,
+                  maxOutputTokens: 2048,
+                },
+              });
+              
+              const prompt = `You are a clinical assistant specialized in ovarian pathology. Answer this question professionally and concisely: ${text}`;
+              console.log('Sending request to Gemini API...');
+              
+              const result = await model.generateContent(prompt);
+              const response = await result.response;
+              aiResponse = response.text();
+              console.log('Received response from Gemini API');
+            } catch (error) {
+              console.error('Error getting AI response:', error);
+              aiResponse = "I'm having trouble connecting to the AI service. Please try again later.";
+            }
+          } else {
+            // Fallback response if no API key
+            aiResponse = handleFallbackResponse(text);
+          }
+
+          setTranscript(prev => [...prev, `AI: ${aiResponse}`]);
+          
+          // Speak the response
+          speakText(aiResponse);
+        } catch (error) {
+          console.error('Error getting AI response:', error);
+          const errorMsg = "I encountered an error processing your request. Please try again.";
+          setTranscript(prev => [...prev, `AI: ${errorMsg}`]);
+          speakText(errorMsg);
+        } finally {
+          setIsProcessing(false);
+        }
+      };
+
+      recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error('Speech recognition error:', event.error);
+        setIsProcessing(false);
+        if (event.error === 'no-speech') {
+          setTranscript(prev => [...prev, 'AI: No speech detected. Please try again.']);
+        } else if (event.error === 'network') {
+          setTranscript(prev => [...prev, 'AI: Network error. Please check your connection.']);
+        }
+      };
+
+      recognitionRef.current.onend = () => {
+        // Recognition ended - will be restarted in toggleAssistant if needed
+      };
+    } else {
+      console.warn('Speech Recognition API not supported in this browser');
+    }
+
+    synthRef.current = window.speechSynthesis;
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
+  }, []); // Empty dependency array - initialize once
+
+  const handleFallbackResponse = (text: string): string => {
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes('guideline') || lowerText.includes('who') || lowerText.includes('staging')) {
+      return "According to WHO guidelines for ovarian pathology, classification follows standardized criteria based on histological features, molecular markers, and clinical presentation. For FIGO staging, ovarian cancers are staged from I to IV based on extent of disease.";
+    } else if (lowerText.includes('classification') || lowerText.includes('rationale')) {
+      return "Our hybrid ResNet50-ResNet18 model classifies ovarian tissue using deep learning features. The model extracts texture and semantic features, applies recursive feature elimination, and fuses predictions using Kalman filtering and Dempster-Shafer theory for robust classification.";
+    } else if (lowerText.includes('hello') || lowerText.includes('hi')) {
+      return "Hello! I'm your clinical assistant. How can I help you with ovarian pathology questions today?";
+    } else {
+      return "I understand your question. For detailed clinical guidance, please configure your Gemini API key for enhanced AI responses. I can help with WHO guidelines, FIGO staging, and classification rationales.";
+    }
+  };
+
+  const speakText = (text: string) => {
+    if (synthRef.current) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      synthRef.current.speak(utterance);
+    }
+  };
+
   const toggleAssistant = () => {
-    setIsActive(!isActive);
     if (!isActive) {
-      setTranscript(prev => [...prev, "AI: ResNet Clinical Assistant Online. How can I assist with your findings today?"]);
+      // Starting
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+          setIsActive(true);
+          setTranscript(prev => [...prev, "AI: ResNet Clinical Assistant Online. How can I assist with your findings today?"]);
+          speakText("ResNet Clinical Assistant Online. How can I assist with your findings today?");
+        } catch (error) {
+          console.error('Error starting recognition:', error);
+          setTranscript(prev => [...prev, "Error: Could not start voice recognition. Please check your browser permissions."]);
+        }
+      } else {
+        setTranscript(prev => [...prev, "Error: Speech Recognition is not supported in your browser."]);
+      }
+    } else {
+      // Stopping
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+      setIsActive(false);
+      setTranscript(prev => [...prev, "AI: Assistant offline."]);
     }
   };
 

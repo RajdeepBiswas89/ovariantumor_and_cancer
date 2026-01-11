@@ -11,6 +11,7 @@ import ClinicalAssistant from './components/ClinicalAssistant';
 import Auth from './components/Auth';
 
 const App: React.FC = () => {
+  console.log('App component rendering');
   const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'diagnose' | 'assistant' | 'solutions'>('home');
   const [user, setUser] = useState<any>(null);
 
