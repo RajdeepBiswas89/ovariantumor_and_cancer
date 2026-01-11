@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ShieldCheck, Mail, Lock, Chrome, Building2, ArrowRight, Activity, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, Chrome, Building2, ArrowRight, Activity, Eye, EyeOff, Loader2, User } from 'lucide-react';
 
 interface AuthProps {
   onLogin: (userData: any) => void;
@@ -19,7 +19,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     setLoading(true);
     // Simulate industry-grade auth latency
     setTimeout(() => {
-      onLogin({ name: 'Dr. Sarah Mitchell', role: 'Chief Pathologist', institution: 'General Medical Center' });
+      onLogin({ name: 'Sumana Sikdar', role: 'JU PhD Scholar', institution: 'General Medical Center' });
       setLoading(false);
     }, 1500);
   };
@@ -31,8 +31,8 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     // Simulate OAuth handshake
     setTimeout(() => {
       onLogin({ 
-        name: 'Dr. Sarah Mitchell', 
-        role: 'Chief Pathologist', 
+        name: 'Sumana Sikdar', 
+        role: 'JU PhD Scholar', 
         institution: provider === 'google' ? 'Google Health Cloud' : 'Microsoft Healthcare' 
       });
       if (provider === 'google') setGoogleLoading(false);
@@ -48,6 +48,23 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
       <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse delay-1000"></div>
 
       <div className="max-w-md w-full relative z-10">
+      {/* Profile Image - Centered */}
+      <div className="flex flex-col items-center justify-center mb-8">
+        <div className="relative w-40 h-40">
+          <img 
+            src="/sumana sikdar.jpeg" 
+            alt="Sumana Sikdar" 
+            className="w-full h-full rounded-full border-4 border-white shadow-xl object-cover"
+            onError={(e) => {
+              console.error('Error loading image:', e);
+              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWEyIDIgMCAwIDEtMiAySDZhMiAyIDAgMCAxLTItMlY1YTIgMiAwIDAgMSAyLTJoN2w0IDRoOWEyIDIgMCAwIDEgMiAyejIiPjwvcGF0aD48L3N2Zz4=';
+            }}
+          />
+          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-white px-4 py-1.5 rounded-full shadow-md whitespace-nowrap">
+            <span className="text-sm font-bold text-teal-700">Sumana Sikdar</span>
+          </div>
+        </div>
+      </div>
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center bg-slate-900 p-4 rounded-3xl text-teal-500 shadow-2xl mb-6 ring-1 ring-white/10">
             <Activity size={40} />
