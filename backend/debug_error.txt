@@ -1,0 +1,88 @@
+Fix attempt failed: <class 'keras.src.models.model.Model'> could not be deserialized properly. Please ensure that components that are Python object instances (layers, models, etc.) returned by `get_config()` are explicitly deserialized in the model's `from_config()` method.
+
+config={'class_name': 'Functional', 'config': {}, 'registered_name': 'Functional', 'build_config': {'input_shape': [None, 224, 224, 3]}}.
+
+Exception encountered: Error when deserializing class 'ReLU' using config={'name': 're_lu_85', 'trainable': True, 'dtype': 'float32', 'max_value': None, 'negative_slope': {'class_name': '__numpy__', 'config': {'value': 0.0, 'dtype': 'float32'}}, 'threshold': {'class_name': '__numpy__', 'config': {'value': 0.0, 'dtype': 'float32'}}}.
+
+Exception encountered: '<' not supported between instances of 'dict' and 'float'
+Traceback (most recent call last):
+  File "D:\ovarian tumor\try_load_real.py", line 108, in fix_and_load
+    raise ValueError("Loaded as DummyFunctional")
+ValueError: Loaded as DummyFunctional
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ovarian tumor\try_load_real.py", line 237, in fix_and_load
+    raise ValueError("Fixed model loaded as DummyFunctional")
+ValueError: Fixed model loaded as DummyFunctional
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\ops\operation.py", line 317, in from_config
+    return cls(**config)
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\layers\activations\relu.py", line 49, in __init__
+    if negative_slope is None or negative_slope < 0.0:
+                                 ^^^^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'dict' and 'float'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\saving\serialization_lib.py", line 733, in deserialize_keras_object
+    instance = cls.from_config(inner_config)
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\models\model.py", line 694, in from_config
+    return functional_from_config(
+        cls, config, custom_objects=custom_objects
+    )
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\models\functional.py", line 558, in functional_from_config
+    process_layer(layer_data)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\models\functional.py", line 521, in process_layer
+    layer = saving_utils.model_from_config(
+        layer_data, custom_objects=custom_objects
+    )
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\legacy\saving\saving_utils.py", line 83, in model_from_config
+    return serialization.deserialize_keras_object(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        config,
+        ^^^^^^^
+    ...<2 lines>...
+        printable_module_name="layer",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\legacy\saving\serialization.py", line 497, in deserialize_keras_object
+    deserialized_obj = cls.from_config(cls_config)
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\ops\operation.py", line 319, in from_config
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Error when deserializing class 'ReLU' using config={'name': 're_lu_85', 'trainable': True, 'dtype': 'float32', 'max_value': None, 'negative_slope': {'class_name': '__numpy__', 'config': {'value': 0.0, 'dtype': 'float32'}}, 'threshold': {'class_name': '__numpy__', 'config': {'value': 0.0, 'dtype': 'float32'}}}.
+
+Exception encountered: '<' not supported between instances of 'dict' and 'float'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\ovarian tumor\try_load_real.py", line 277, in fix_and_load
+    model = keras.models.model_from_json(config_str, custom_objects=custom_objects)
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\models\model.py", line 920, in model_from_json
+    return serialization_lib.deserialize_keras_object(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        model_config, custom_objects=custom_objects
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\RAJDEEP\AppData\Local\Programs\Python\Python313\Lib\site-packages\keras\src\saving\serialization_lib.py", line 735, in deserialize_keras_object
+    raise TypeError(
+    ...<6 lines>...
+    )
+TypeError: <class 'keras.src.models.model.Model'> could not be deserialized properly. Please ensure that components that are Python object instances (layers, models, etc.) returned by `get_config()` are explicitly deserialized in the model's `from_config()` method.
+
+config={'class_name': 'Functional', 'config': {}, 'registered_name': 'Functional', 'build_config': {'input_shape': [None, 224, 224, 3]}}.
+
+Exception encountered: Error when deserializing class 'ReLU' using config={'name': 're_lu_85', 'trainable': True, 'dtype': 'float32', 'max_value': None, 'negative_slope': {'class_name': '__numpy__', 'config': {'value': 0.0, 'dtype': 'float32'}}, 'threshold': {'class_name': '__numpy__', 'config': {'value': 0.0, 'dtype': 'float32'}}}.
+
+Exception encountered: '<' not supported between instances of 'dict' and 'float'

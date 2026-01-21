@@ -1,0 +1,22 @@
+{
+    "model_name": "ResNet50_ResNet18_Fused_Model",
+    "description": "Fused model with Kalman + DST fusion",
+    "timestamp": "2026-01-10T12:38:21.768339",
+    "image_size": 224,
+    "num_classes": 4,
+    "class_names": [
+        "class0_notinfected",
+        "class1_infected",
+        "class2_ovariancancer",
+        "class3_ovariantumor"
+    ],
+    "pipeline": {
+        "step1": "Input: 224x224x3 image",
+        "step2": "Feature extraction: ResNet50 + ResNet18",
+        "step3": "Feature selection: RFE",
+        "step4": "Classification: Dense layers",
+        "step5": "Fusion: Kalman + DST",
+        "step6": "Output: 4-class prediction"
+    },
+    "model_file": "fused_model.pkl"
+}

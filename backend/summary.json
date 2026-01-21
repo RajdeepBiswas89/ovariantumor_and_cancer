@@ -1,0 +1,22 @@
+{
+    "total_files": 8,
+    "files": [
+        "summary.json",
+        "rfe_r50.pkl",
+        "extractor_r18.h5",
+        "extractor_r50.h5",
+        "classifier_r18.h5",
+        "rfe_r18.pkl",
+        "config.json",
+        "classifier_r50.h5"
+    ],
+    "model_components": [
+        "classifier_r50.h5 - ResNet50 classifier",
+        "classifier_r18.h5 - ResNet18 classifier",
+        "extractor_r50.h5 - ResNet50 feature extractor",
+        "extractor_r18.h5 - ResNet18 feature extractor",
+        "rfe_r50.pkl - RFE for ResNet50",
+        "rfe_r18.pkl - RFE for ResNet18",
+        "config.json - Model configuration"
+    ]
+}

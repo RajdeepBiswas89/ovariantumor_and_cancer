@@ -1,0 +1,12 @@
+{
+    "model_name": "Hybrid_Fused_Model",
+    "timestamp": "2026-01-10T16:36:08.008800",
+    "image_size": 224,
+    "num_classes": 4,
+    "class_names": [
+        "class0_notinfected",
+        "class1_infected",
+        "class2_ovariancancer",
+        "class3_ovariantumor"
+    ]
+}

@@ -19,7 +19,7 @@ const Auth: React.FC<AuthProps> = ({ onLogin }) => {
     setLoading(true);
     // Simulate industry-grade auth latency
     setTimeout(() => {
-      onLogin({ name: 'Sumana Sikdar', role: 'JU PhD Scholar', institution: 'General Medical Center' });
+      onLogin({ name: 'Sumana Sikdar', role: 'JU PhD Scholar', institution: 'Jadavpur University' });
       setLoading(false);
     }, 1500);
   };
